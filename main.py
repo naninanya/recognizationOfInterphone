@@ -89,30 +89,31 @@ if __name__ == '__main__':
 
                 f, s, t = detectTonesInOctave(freq_max)
 
-                if f:
+                if f and not detect_first:
                     start = time.time()
                     detect_first = True
                     print("第1音検知")
                     continue
 
-                if s:
+                if s and not detect_second and detect_first:
                     detect_second = True
                     print("第2音検知")
                     continue
-                if t:
+
+                if t and not detect_third and detect_second:
                     detect_third = True
                     print("第3音検知")
 
-                if detect_first and detect_second and detect_third:
-                    print("インターホンの音を感知")
-                    time.sleep(5)
-                    print("リセット")
-                    detect_first = detect_second = detect_third = False
+            elapsed_time = time.time() - start
+            if detect_first and elapsed_time > 1.5:
+                print("時間切れによるリセット")
+                detect_first = detect_second = detect_third = False
 
-                elapsed_time = time.time() - start
-                if detect_first and elapsed_time > 2:
-                    print("時間切れによるリセット")
-                    detect_first = detect_second = detect_third = False
+            if detect_first and detect_second and detect_third:
+                print("インターホンの音を検知")
+                time.sleep(5)
+                print("検知後のリセット")
+                detect_first = detect_second = detect_third = False
 
         except KeyboardInterrupt:
             break
